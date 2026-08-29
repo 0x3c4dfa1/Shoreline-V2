@@ -92,19 +92,6 @@ public abstract class MixinConnection implements IConnection
                                boolean flush,
                                CallbackInfo info)
     {
-        if (packet instanceof ServerboundPlayerActionPacket p)
-        {
-            Shoreline.info(p.getAction() + " : " + p.getPos());
-        }
-        else if (packet instanceof ServerboundSwingPacket p)
-        {
-            Shoreline.info("Swing");
-        }
-        else if (packet instanceof ServerboundSetCarriedItemPacket p)
-        {
-            Shoreline.info("Slot: " + p.getSlot());
-        }
-
         PacketEvent.Send<?> event = new PacketEvent.Send<>(packet);
         EventBus.getInstance().post(event, packet.getClass());
         if (event.isCanceled())
