@@ -18,14 +18,11 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -37,16 +34,12 @@ import net.shoreline.client.api.setting.Setting;
 import net.shoreline.client.api.setting.impl.BooleanSetting;
 import net.shoreline.client.api.setting.impl.SettingGroup;
 import net.shoreline.client.api.setting.impl.ToggleableSettingGroup;
-import net.shoreline.client.asm.ducks.render.IItemFeatureRenderer;
 import net.shoreline.client.impl.event.TickEvent;
 import net.shoreline.client.impl.event.render.RenderWorldEvent;
 import net.shoreline.client.impl.modules.impl.RenderModule;
-import net.shoreline.client.impl.render.ClientRenderTypes;
 import net.shoreline.client.impl.render.ColorUtil;
 import net.shoreline.client.impl.render.Interpolation;
 import net.shoreline.eventbus.api.Subscribe;
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL11C;
 
 import java.util.ArrayList;
@@ -87,7 +80,6 @@ public class NametagsModule extends RenderModule
     public NametagsModule()
     {
         super("Nametags", "Renders a nametag over players", Category.RENDER);
-        ((IItemFeatureRenderer) renderer).shoreline$setNametagRendering(false);
         INSTANCE = this;
     }
 
@@ -102,7 +94,6 @@ public class NametagsModule extends RenderModule
         Frustum frustum = event.getFrustum();
         PoseStack matrices = event.getPoseStack();
         Camera camera = mc.getEntityRenderDispatcher().camera;
-        ((IItemFeatureRenderer) renderer).shoreline$setNametagRendering(false);
         for (PlayerEntry entry : entries)
         {
             Player player = entry.getPlayer();

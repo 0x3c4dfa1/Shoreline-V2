@@ -34,7 +34,6 @@
     "render.MixinGameRenderer",
     "render.MixinGLBuffer",
     "render.MixinGlyphInfo",
-    "render.MixinItemFeatureRenderer",
     "render.MixinLevelRenderer",
     "render.MixinLightmap",
     "render.MixinNativeImage",
