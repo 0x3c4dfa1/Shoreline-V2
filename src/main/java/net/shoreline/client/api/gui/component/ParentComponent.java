@@ -32,7 +32,7 @@ public class ParentComponent extends AbstractComponent implements Interactable, 
     public void drawComponent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks)
     {
         drawHoverRect(graphics);
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
         drawAnimatedRightText(graphics, open ? "-" : "+", false, partialTicks);
         //drawString(graphics, open ? "-" : "+", getX() + getWidth() - 2, getY() + (getDefaultHeaderHeight() / 2) + 1.0f, false, 255, true);
         if (animation.getFactor() > 0.001)

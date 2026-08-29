@@ -11,15 +11,15 @@ import net.shoreline.client.api.module.Toggleable;
 import net.shoreline.client.api.setting.Setting;
 import net.shoreline.client.api.setting.impl.*;
 import net.shoreline.client.impl.event.render.*;
+import net.shoreline.client.impl.modules.impl.RenderModule;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-public class NoRenderModule extends Toggleable
+public class NoRenderModule extends RenderModule
 {
-
     public static NoRenderModule INSTANCE;
     Setting<Boolean> hurtCam = new BooleanSetting.Builder("HurtCam")
             .setDescription("Cancels the camera shake when taking damage")
@@ -119,13 +119,15 @@ public class NoRenderModule extends Toggleable
     Setting<Void> hudConfig = new SettingGroup.Builder("HUD")
             .addAll(potionsHud, itemName, toastConfig, textShadow).build();
 
-    Setting<Collection<Block>> blockBlackListConfig = new RegistrySetting.Builder<Block>("Blacklist")
+    Setting<Collection<Block>> blockListConfig = new RegistrySetting.Builder<Block>("Blacklist")
             .setValues(Blocks.CAVE_VINES, Blocks.CAVE_VINES_PLANT)
             .setRegistry(BuiltInRegistries.BLOCK)
             .setDescription("List of blocks that you dont want to render")
+            .setObserver(v -> reload(true))
             .build();
     Setting<Boolean> blocksConfig = new ToggleableSettingGroup.Builder("Blocks")
-            .add(blockBlackListConfig)
+            .add(blockListConfig)
+            .setObserver(v -> reload(true))
             .setDefaultValue(false).build();
     Setting<Boolean> blindnessConfig = new BooleanSetting.Builder("Blindness")
             .setDescription("Cancels the blindness effect")

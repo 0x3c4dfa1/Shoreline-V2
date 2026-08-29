@@ -10,14 +10,14 @@ import net.shoreline.client.impl.render.animation.Easing;
 
 import java.awt.*;
 
-public class ModuleComponent extends GridParentComponent
+public class ModuleComponent extends ParentComponent
 {
     private final Module module;
     private final ColorAnimation colorAnimation;
 
     public ModuleComponent(Module module)
     {
-        super(module.getName(), () -> true, 1);
+        super(module.getName(), () -> true);
         this.module = module;
         this.colorAnimation = new ColorAnimation(150, Easing.LINEAR);
 
@@ -42,7 +42,7 @@ public class ModuleComponent extends GridParentComponent
         );
 
         Color clr = getTheme().getPrimaryC(0.5f);
-        Color enabledColor = ColorUtil.interpolate(clr, clr.brighter(), hFactor);
+        Color enabledColor = ColorUtil.interpolate(clr, getTheme().getHoverC(0.5f), hFactor);
         Color color = ColorUtil.interpolate(
                 hoverColor,
                 enabledColor,
@@ -53,10 +53,10 @@ public class ModuleComponent extends GridParentComponent
         {
             float outlineY = getY() + getFeatureHeight();
             float outlineHeight = getHeight() - getFeatureHeight() + 0.5f;
-            Render2DUtil.drawRect(graphics, getX(), outlineY, getX() + 1.0f, outlineY + outlineHeight, enabledColor.getRGB());
+            Render2DUtil.drawRect(graphics, getX(), outlineY, getX() + 1.0f, outlineY + outlineHeight, applyCloseEffect(color.getRGB()));
         }
 
-        Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), color.getRGB());
+        Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), applyCloseEffect(color.getRGB()));
         drawString(graphics, getLabel(), getX() + 3f, getY() + (getFeatureHeight()) / 2 + 1, 0xFFFFFFFF);
     }
 

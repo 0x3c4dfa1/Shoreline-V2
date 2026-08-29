@@ -184,6 +184,11 @@ public class InventoryManager extends NetworkHandler
         }
     }
 
+    public boolean isMultitickSwapping()
+    {
+        return multitick.isSwapped();
+    }
+
     public boolean isSilentSwapping()
     {
         return mc.player != null && mc.player.getInventory().getSelectedSlot() != serverSlot;

@@ -14,16 +14,16 @@ public enum MiningPackets
         @Override
         public void sendStartPackets(NetworkHandler handler, BlockPos blockPos, Direction direction)
         {
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
+            handler.sendPacket(new ServerboundPlayerActionPacket(
+                    ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos, direction));
             handler.sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         }
 
         @Override
         public void sendStopPackets(NetworkHandler handler, BlockPos blockPos, Direction direction)
         {
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
+            handler.sendPacket(new ServerboundPlayerActionPacket(
+                    ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
         }
     },
     GRIM
@@ -31,38 +31,10 @@ public enum MiningPackets
         @Override
         public void sendStartPackets(NetworkHandler handler, BlockPos blockPos, Direction direction)
         {
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
-        }
-
-        @Override
-        public void sendStopPackets(NetworkHandler handler, BlockPos blockPos, Direction direction)
-        {
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, blockPos, direction));
-        }
-    },
-    GRIM_V3
-    {
-        @Override
-        public void sendStartPackets(NetworkHandler handler, BlockPos blockPos, Direction direction)
-        {
-            handler.sendPacket(new ServerboundPlayerActionPacket(
-                    ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
             handler.sendPacket(new ServerboundPlayerActionPacket(
                     ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos, direction));
             handler.sendPacket(new ServerboundPlayerActionPacket(
-                    ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(
-                    ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-
-            handler.sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
-            handler.sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
+                    ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos.below(2000), direction));
             handler.sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         }
 
@@ -71,8 +43,7 @@ public enum MiningPackets
         {
             handler.sendPacket(new ServerboundPlayerActionPacket(
                     ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, blockPos, direction));
-            handler.sendPacket(new ServerboundPlayerActionPacket(
-                    ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, blockPos, direction));
+            handler.sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         }
     };
 

@@ -1,11 +1,12 @@
 package net.shoreline.client.impl.render;
 
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.RenderSetup;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ClientRenderTypes
@@ -26,4 +27,24 @@ public class ClientRenderTypes
 
         return RenderType.create("shoreline_font", renderSetup);
     }));
+
+    public static final BiFunction<Identifier, Boolean, RenderType> ITEM = Util.memoize(((identifier, translucent) ->
+    {
+        RenderSetup.RenderSetupBuilder renderSetup = RenderSetup.builder(translucent ? ClientPipelines.ITEMS_TRANSLUCENT : ClientPipelines.ITEMS)
+                .withTexture("Sampler0", identifier)
+                .useLightmap();
+
+        if (translucent)
+        {
+            renderSetup.sortOnUpload();
+        }
+
+        return RenderType.create("shoreline_item", renderSetup.createRenderSetup());
+    }));
+
+    public static final RenderType GLINT = RenderType.create(
+            "shoreline_glint", RenderSetup.builder(ClientPipelines.GLINT)
+                    .withTexture("Sampler0", ItemFeatureRenderer.ENCHANTED_GLINT_ITEM)
+                    .setTextureTransform(TextureTransform.GLINT_TEXTURING)
+                    .createRenderSetup());
 }

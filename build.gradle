@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 plugins {
     id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
     id 'com.github.gmazzo.buildconfig' version '5.3.5'
@@ -93,5 +96,49 @@ def execute(String cmd) {
         return stdout.toString().trim()
     } catch (ignored) {
         return null
+    }
+}
+
+def prismDir = file("${System.getProperty('user.home')}/AppData/Roaming/PrismLauncher/instances/${project.minecraft_version}/minecraft/mods")
+
+tasks.register("prism")
+{
+    group = "build"
+    description = "Builds shoreline and adds the jar to your prism mods folder"
+
+    dependsOn tasks.named("build")
+
+    doLast
+    {
+        def jarFile = tasks.named("jar").get().archiveFile.get().asFile
+        if (!jarFile.exists())
+        {
+            throw new GradleException("Shoreline jar missing: ${jarFile}")
+        }
+
+        if (!prismDir.exists())
+        {
+            return
+        }
+
+        def jar = jarFile.toPath().toAbsolutePath()
+        def targetPath = new File(prismDir, jarFile.name).toPath().toAbsolutePath()
+
+        try
+        {
+            Files.deleteIfExists(targetPath)
+        }
+        catch (Exception ignored)
+        {
+            return
+        }
+
+        try
+        {
+            Files.createLink(targetPath, jar)
+        }
+        catch (Exception ignored)
+        {
+        }
     }
 }

@@ -4,17 +4,23 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.renderer.OutlineBufferSource;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownExperienceBottle;
 import net.minecraft.world.phys.Vec3;
 import net.shoreline.client.api.module.Category;
 import net.shoreline.client.api.module.Toggleable;
 import net.shoreline.client.api.setting.Setting;
-import net.shoreline.client.api.setting.impl.BooleanSetting;
-import net.shoreline.client.api.setting.impl.ColorSetting;
-import net.shoreline.client.api.setting.impl.EnumSetting;
-import net.shoreline.client.api.setting.impl.NumberSetting;
+import net.shoreline.client.api.setting.impl.*;
 import net.shoreline.client.impl.Managers;
 import net.shoreline.client.impl.event.ClientEvent;
 import net.shoreline.client.impl.event.render.RenderWorldEvent;
@@ -34,6 +40,9 @@ public class ShaderModule extends Toggleable
 {
     public static ShaderModule INSTANCE;
 
+    Setting<Float> rangeConfig = new NumberSetting.Builder<Float>("Range")
+            .setMin(0.0f).setDefaultValue(30.0f).setMax(250.0f).setFormat("m")
+            .setDescription("If entity is within this range we apply shaders").build();
     Setting<EnumShader> mode = new EnumSetting.Builder<EnumShader>("Shader")
             .setDefaultValue(EnumShader.OUTLINE)
             .setDescription("The shader mode to use").build();
@@ -51,8 +60,34 @@ public class ShaderModule extends Toggleable
             .setDefaultValue(Color.PINK).build();
 
     Setting<Boolean> hands = new BooleanSetting.Builder("Hands")
-            .setDescription("Renders a shader over your hands")
+            .setDescription("Render shaders over hands")
             .setDefaultValue(true).build();
+    Setting<Boolean> players = new BooleanSetting.Builder("Players")
+            .setDescription("Render shaders over other players")
+            .setDefaultValue(true).build();
+    Setting<Boolean> self = new BooleanSetting.Builder("Self")
+            .setDescription("Render shaders over the player")
+            .setDefaultValue(true).build();
+    Setting<Boolean> crystals = new BooleanSetting.Builder("Crystals")
+            .setDescription("Render shaders over crystals")
+            .setDefaultValue(true).build();
+    Setting<Boolean> items = new BooleanSetting.Builder("Items")
+            .setDescription("Render shaders over items")
+            .setDefaultValue(true).build();
+    Setting<Boolean> xp = new BooleanSetting.Builder("XP")
+            .setDescription("Render shaders over xp bottles")
+            .setDefaultValue(true).build();
+    Setting<Boolean> pearls = new BooleanSetting.Builder("Pearls")
+            .setDescription("Render shaders over pearls")
+            .setDefaultValue(true).build();
+    Setting<Boolean> passive = new BooleanSetting.Builder("Passive")
+            .setDescription("Render shaders over hands")
+            .setDefaultValue(true).build();
+    Setting<Boolean> hostiles = new BooleanSetting.Builder("Hostiles")
+            .setDescription("Render shaders over hands")
+            .setDefaultValue(true).build();
+    public Setting<Void> renderTargets = new SettingGroup.Builder("Target")
+            .addAll(hands, players, self, crystals, items, xp, pearls, passive, hostiles).build();
 
     public ShaderModule()
     {
@@ -70,6 +105,7 @@ public class ShaderModule extends Toggleable
         }
 
         PoseStack poseStack = event.getPoseStack();
+        Frustum frustum = event.getFrustum();
         Vec3 camPos = event.getCamera().pos;
 
         ShaderPass shader = ShaderPasses.ENTITIES;
@@ -83,7 +119,7 @@ public class ShaderModule extends Toggleable
         {
             for (Entity entity : mc.level.entitiesForRendering())
             {
-                if (entity == mc.player)
+                if (!shouldRenderShader(entity) || !frustum.isVisible(entity.getBoundingBox()))
                 {
                     continue;
                 }
@@ -114,10 +150,27 @@ public class ShaderModule extends Toggleable
         ShaderPasses.ENTITIES.draw(chain, this);
         ShaderPasses.HANDS.draw(chain, this);
 
-        ShaderPasses.ENTITIES.clearTarget();
-        ShaderPasses.HANDS.clearTarget();
-        ShaderPasses.ENTITIES.clearOutput();
-        ShaderPasses.HANDS.clearOutput();
+        //ShaderPasses.ENTITIES.clearTarget();
+        //ShaderPasses.HANDS.clearTarget();
+    }
+
+    private boolean shouldRenderShader(Entity entity)
+    {
+        if (Mth.square(rangeConfig.getValue()) < entity.distanceToSqr(mc.gameRenderer.getMainCamera().position()))
+        {
+            return false;
+        }
+
+        return switch (entity)
+        {
+            case Player player when player != mc.player ? players.getValue() : self.getValue() -> true;
+            case Monster monster when hostiles.getValue() -> true;
+            case Animal animalEntity when passive.getValue() -> true;
+            case ItemEntity itemEntity when items.getValue() -> true;
+            case ThrownExperienceBottle xpEntity when xp.getValue() -> true;
+            case ThrownEnderpearl pearlEntity when pearls.getValue() -> true;
+            default -> entity instanceof EndCrystal && crystals.getValue();
+        };
     }
 
     @RequiredArgsConstructor

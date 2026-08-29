@@ -14,6 +14,8 @@ import net.shoreline.eventbus.api.Subscribe;
 
 public class TimerModule extends Toggleable
 {
+    public static TimerModule INSTANCE;
+
     Setting<TickMode> modeConfig = new EnumSetting.Builder<TickMode>("Mode")
             .setDescription("The mode to speed up ticks")
             .setDefaultValue(TickMode.ALWAYS).build();
@@ -34,6 +36,7 @@ public class TimerModule extends Toggleable
     public TimerModule()
     {
         super("Timer", "Change the game tick speed", Category.WORLD);
+        INSTANCE = this;
     }
 
     @Override

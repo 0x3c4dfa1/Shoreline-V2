@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.state.GameRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.shoreline.client.impl.Managers;
 import net.shoreline.client.impl.event.render.RenderBlockOutlineEvent;
 import net.shoreline.client.impl.event.render.ShaderEvent;
 import net.shoreline.client.impl.modules.render.NoRenderModule;

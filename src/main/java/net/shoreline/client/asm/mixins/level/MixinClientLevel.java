@@ -5,6 +5,7 @@ import net.minecraft.client.multiplayer.prediction.BlockStatePredictionHandler;
 import net.shoreline.client.asm.ducks.level.IClientLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.injection.Inject;
 
 @Mixin(ClientLevel.class)
 public abstract class MixinClientLevel implements IClientLevel

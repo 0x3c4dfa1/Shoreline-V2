@@ -5,7 +5,7 @@ import net.shoreline.client.api.interfaces.Identifiable;
 import net.shoreline.eventbus.EventBus;
 import net.shoreline.eventbus.api.Listener;
 
-public class Feature implements Identifiable, Globals
+public class Feature implements Identifiable, Globals, Formatted
 {
     protected final String name;
     protected final String[] nameAliases;

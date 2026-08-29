@@ -1,6 +1,8 @@
 package net.shoreline.client.impl.modules.movement;
 
+import net.minecraft.client.KeyMapping;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Input;
 import net.shoreline.client.Shoreline;
 import net.shoreline.client.api.module.Category;
 import net.shoreline.client.api.module.Toggleable;
@@ -11,6 +13,7 @@ import net.shoreline.client.api.setting.impl.NumberSetting;
 import net.shoreline.client.impl.Managers;
 import net.shoreline.client.impl.event.TickEvent;
 import net.shoreline.client.impl.event.entity.player.JumpEvent;
+import net.shoreline.client.impl.event.input.PlayerInputEvent;
 import net.shoreline.client.impl.event.network.StopSprintingEvent;
 import net.shoreline.client.impl.rotation.util.ClientRotationEvent;
 import net.shoreline.client.util.Formatter;
@@ -112,6 +115,15 @@ public class SprintModule extends Toggleable
         float sprintYaw = InputUtil.getYawFromInput(mc.player.getYRot());
         event.setCanceled(true);
         event.setYaw(sprintYaw);
+    }
+
+    @Subscribe
+    public void onMovementCorrection(PlayerInputEvent.Correction event)
+    {
+        if (mode.getValue() != SprintMode.RAGE || !rotate.getValue() || !canSprint())
+        {
+            return;
+        }
     }
 
     @Subscribe

@@ -16,9 +16,7 @@ import net.shoreline.client.impl.modules.hud.*;
 import net.shoreline.client.impl.modules.misc.*;
 import net.shoreline.client.impl.modules.movement.SprintModule;
 import net.shoreline.client.impl.modules.movement.VelocityModule;
-import net.shoreline.client.impl.modules.render.BlockHighlightModule;
-import net.shoreline.client.impl.modules.render.NoRenderModule;
-import net.shoreline.client.impl.modules.render.ShaderModule;
+import net.shoreline.client.impl.modules.render.*;
 import net.shoreline.client.impl.modules.world.*;
 import net.shoreline.eventbus.EventBus;
 import net.shoreline.eventbus.api.Subscribe;
@@ -67,9 +65,15 @@ public class ModuleManager extends RegistryFeature<Module>
                 new SprintModule(),
                 new VelocityModule(),
 
+                new AmbienceModule(),
                 new BlockHighlightModule(),
+                new ChamsModule(),
+                new FullBrightModule(),
+                new NametagsModule(),
                 new NoRenderModule(),
+                new NoWeatherModule(),
                 new ShaderModule(),
+                new SkyboxModule(),
 
                 new AirPlaceModule(),
                 new AutoToolModule(),
@@ -85,6 +89,7 @@ public class ModuleManager extends RegistryFeature<Module>
                 new MobEffectsElement(),
                 new ModulesElement(),
                 new PingElement(),
+                new SpeedElement(),
                 new WatermarkElement()
         );
 

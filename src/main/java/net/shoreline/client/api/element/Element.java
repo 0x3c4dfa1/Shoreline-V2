@@ -91,7 +91,7 @@ public abstract class Element extends Toggleable
         Window resolution = mc.getWindow();
         float sH = resolution.getGuiScaledHeight();
         float padding = HudModule.INSTANCE.getPadding().getValue();
-        float clampedY = Math.clamp(y, padding, sH - padding - getHeight());
+        float clampedY = Math.clamp(y, padding, Math.max(padding, sH - padding - getHeight()));
         yPos.setValue(clampedY);
     }
 

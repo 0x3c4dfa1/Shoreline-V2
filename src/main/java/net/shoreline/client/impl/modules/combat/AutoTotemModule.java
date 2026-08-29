@@ -58,7 +58,6 @@ public class AutoTotemModule extends InventorySwapModule
 
     @Getter
     private boolean isTotemInOffHand, isTotemInMainHand;
-    private boolean clearedTotem;
 
     public AutoTotemModule()
     {
@@ -156,14 +155,6 @@ public class AutoTotemModule extends InventorySwapModule
 
             stack.shrink(1);
             swapItemWithSlot(Items.TOTEM_OF_UNDYING, Inventory.SLOT_OFFHAND, fastSwap.getValue());
-            clearedTotem = true;
-        }
-
-        if (event.getPacket() instanceof ClientboundContainerSetContentPacket packet
-                && packet.items().get(45).getItem().equals(Items.AIR) && clearedTotem)
-        {
-            event.setCanceled(true);
-            clearedTotem = false;
         }
     }
 

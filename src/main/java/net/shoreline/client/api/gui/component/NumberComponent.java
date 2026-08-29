@@ -42,14 +42,14 @@ public class NumberComponent extends AbstractComponent implements Interactable
     public void drawSlider(GuiGraphicsExtractor graphics, String text, float fill, float partialTicks)
     {
         double hFactor = hoverAnimation.getFactor();
-        Color clr = getTheme().getPrimaryC(0.5f);
-        Color color = ColorUtil.interpolate(clr, clr.brighter(), hFactor);
+        Color clr = getTheme().getHoverC(0.5f);
+        Color color = ColorUtil.interpolate(clr, getTheme().getHoverC(0.5f), hFactor);
 
         float sliderWidth = getWidth() * fill;
         Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + sliderWidth, getY() + getFeatureHeight(), getTheme().getColor(color.getRGB(), 0.5f));
         Render2DUtil.drawRect(graphics, getX() + sliderWidth, getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), ColorUtil.withTransparency(Color.GRAY, Math.max(50, (int) (75 * hoverAnimation.getFactor()))).getRGB());
         scissorText(graphics, text);
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
         graphics.disableScissor();
         drawAnimatedRightText(graphics, text, false, partialTicks);
     }
@@ -81,7 +81,7 @@ public class NumberComponent extends AbstractComponent implements Interactable
     @Override
     public void mouseClicked(double mouseX, double mouseY, int button)
     {
-        if (isHovered(mouseX, mouseY))
+        if (isHovered(mouseX, mouseY) && !isDisabled())
         {
             if (button == 0)
             {
@@ -157,5 +157,10 @@ public class NumberComponent extends AbstractComponent implements Interactable
         {
             textHandler.update(chr);
         }
+    }
+
+    public boolean isDisabled()
+    {
+        return false;
     }
 }

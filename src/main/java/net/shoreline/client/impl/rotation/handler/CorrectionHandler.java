@@ -3,7 +3,9 @@ package net.shoreline.client.impl.rotation.handler;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec2;
+import net.shoreline.client.impl.event.input.PlayerInputEvent;
 import net.shoreline.client.impl.modules.client.RotationsModule;
+import net.shoreline.eventbus.EventBus;
 
 public class CorrectionHandler
 {
@@ -27,6 +29,13 @@ public class CorrectionHandler
                 direction.forward, direction.backward,
                 direction.left, direction.right,
                 input.jump(), input.shift(), input.sprint());
+
+        PlayerInputEvent.Correction event = new PlayerInputEvent.Correction(input);
+        EventBus.getInstance().post(event);
+        if (event.isCanceled())
+        {
+            corrected = event.getInput();
+        }
 
         float sideways = corrected.left() == corrected.right()
                 ? 0f

@@ -1,6 +1,8 @@
 package net.shoreline.client.impl.render;
 
 import lombok.experimental.UtilityClass;
+import net.minecraft.util.Mth;
+import org.joml.Vector4f;
 
 import java.awt.*;
 
@@ -18,13 +20,16 @@ public class ColorUtil
 
     public int interpolate(int start, int end, double factor)
     {
+        float t = Mth.clamp((float) factor, 0.0f, 1.0f);
         float[] s = getRGBValues(start);
         float[] e = getRGBValues(end);
+
         return new Color(
-                (int) (s[0] * factor + e[0] * (1.0f - factor)),
-                (int) (s[1] * factor + e[1] * (1.0f - factor)),
-                (int) (s[2] * factor + e[2] * (1.0f - factor)),
-                (int) (s[3] * factor + e[3] * (1.0f - factor))).getRGB();
+            Mth.lerp(t, e[0], s[0]),
+            Mth.lerp(t, e[1], s[1]),
+            Mth.lerp(t, e[2], s[2]),
+            Mth.lerp(t, e[3], s[3])
+        ).getRGB();
     }
 
     public Color withTransparency(Color color, int alpha)
@@ -43,6 +48,17 @@ public class ColorUtil
     public Color withTransparency(int color, float alpha)
     {
         return withTransparency(color, (int) Math.clamp(alpha * 255, 0, 255));
+    }
+
+    public Color withTransparencyMultiplier(Color color, float multiplier)
+    {
+        multiplier = Math.clamp(multiplier, 0.0f, 1.0f);
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (color.getAlpha() * multiplier));
+    }
+
+    public Color withTransparencyMultiplier(int color, float multiplier)
+    {
+        return withTransparencyMultiplier(new Color(color, true), multiplier);
     }
 
     public int getSimpleVariation(float offset, Color color)
@@ -72,5 +88,60 @@ public class ColorUtil
         float b = c.getBlue() / 255.0f;
         float a = c.getAlpha() / 255.0f;
         return new float[] { r, g, b, a };
+    }
+
+    public Vector4f injectColor(Vector4f vector, int color)
+    {
+        vector.x = ((color >> 16) & 0xFF) / 255f;
+        vector.y = ((color >>  8) & 0xFF) / 255f;
+        vector.z = (color & 0xFF) / 255f;
+        return vector;
+    }
+
+    public static Color hslToColor(float f, float f2, float f3, float f4)
+    {
+        f %= 360.0f;
+        float f5;
+        f5 = (double) f3 < 0.5 ? f3 * (1.0f + f2) : (f3 /= 100.0f) + (f2 /= 100.0f) - f2 * f3;
+        f2 = 2.0f * f3 - f5;
+        f3 = Math.max(0.0f, colorCalc(f2, f5, (f /= 360.0f) + 0.33333334f));
+        float f6 = Math.max(0.0f, colorCalc(f2, f5, f));
+        f2 = Math.max(0.0f, colorCalc(f2, f5, f - 0.33333334f));
+        f3 = Math.min(f3, 1.0f);
+        f6 = Math.min(f6, 1.0f);
+        f2 = Math.min(f2, 1.0f);
+        return new Color(f3, f6, f2, f4);
+    }
+
+    private static float colorCalc(float f, float f2, float f3)
+    {
+        if (f3 < 0.0f)
+        {
+            f3 += 1.0f;
+        }
+
+        if (f3 > 1.0f)
+        {
+            f3 -= 1.0f;
+        }
+
+        if (6.0f * f3 < 1.0f)
+        {
+            float f4 = f;
+            return f4 + (f2 - f4) * 6.0f * f3;
+        }
+
+        if (2.0f * f3 < 1.0f)
+        {
+            return f2;
+        }
+
+        if (3.0f * f3 < 2.0f)
+        {
+            float f5 = f;
+            return f5 + (f2 - f5) * 6.0f * (0.6666667f - f3);
+        }
+
+        return f;
     }
 }

@@ -28,7 +28,7 @@ public class EnumComponent<E extends Enum<E>> extends ParentComponent
     {
         drawHoverRect(graphics);
         scissorText(graphics, Formatter.formatEnum(setting.getValue()));
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
         graphics.disableScissor();
 
         String formatted = Formatter.formatEnum(setting.getValue());
@@ -99,22 +99,7 @@ public class EnumComponent<E extends Enum<E>> extends ParentComponent
         @Override
         public void drawComponent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks)
         {
-            double hFactor = hoverAnimation.getFactor();
-            double eFactor = colorAnimation.getFactor();
-            Color hoverColor = ColorUtil.withTransparency(
-                    Color.GRAY,
-                    Math.max(50, (int) (75 * hFactor))
-            );
-
-            Color clr = getTheme().getPrimaryC(0.5f);
-            Color enabledColor = ColorUtil.interpolate(clr, clr.brighter(), hFactor);
-            Color color = ColorUtil.interpolate(
-                    hoverColor,
-                    enabledColor,
-                    eFactor
-            );
-
-            Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), color.getRGB());
+            drawToggleableRect(graphics, colorAnimation);
             drawString(graphics, Formatter.formatEnum(e), (float) (getX() + getTextPadding() + getHoverAnimation().getCurrent()), getY() + (getFeatureHeight()) / 2 + 1.0f, 0xFFFFFFFF);
         }
 

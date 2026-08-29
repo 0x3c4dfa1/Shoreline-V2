@@ -9,6 +9,7 @@ import net.shoreline.client.impl.Managers;
 import net.shoreline.client.impl.render.ColorUtil;
 import net.shoreline.client.impl.render.Render2DUtil;
 import net.shoreline.client.impl.render.animation.Animation;
+import net.shoreline.client.impl.render.animation.ColorAnimation;
 import net.shoreline.client.impl.render.animation.Easing;
 import net.shoreline.client.impl.render.animation.Smoother;
 
@@ -102,14 +103,15 @@ public abstract class AbstractComponent implements GuiComponent, Globals
 
     protected void drawHoverRect(GuiGraphicsExtractor graphics)
     {
-        Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), ColorUtil.withTransparency(Color.GRAY, Math.max(50, (int) (75 * hoverAnimation.getFactor()))).getRGB());
+        Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(),
+                applyCloseEffect(ColorUtil.withTransparency(Color.GRAY, Math.max(50, (int) (75 * hoverAnimation.getFactor()))).getRGB()));
     }
 
     public void drawValueComponent(GuiGraphicsExtractor graphics, String value, float partialTicks)
     {
         drawHoverRect(graphics);
         scissorText(graphics, value);
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
         graphics.disableScissor();
         drawAnimatedRightText(graphics, value, false, partialTicks);
     }
@@ -130,6 +132,95 @@ public abstract class AbstractComponent implements GuiComponent, Globals
     public void drawAnimatedRightText(GuiGraphicsExtractor graphics, String text, boolean primaryColor, float partialTicks)
     {
         drawRightSettingText(graphics, text, primaryColor, (float) textSmoother.smooth(Managers.TEXT.getWidth(text), 0.5f, partialTicks));
+    }
+
+    public void drawString(GuiGraphicsExtractor graphics, String text, float x, float y, boolean primaryColor, boolean rightAlign)
+    {
+        int color = primaryColor
+                ? getTheme().getPrimary()
+                : 0xFFFFFFFF;
+        float align = rightAlign
+                ? x - Managers.TEXT.getWidth(text)
+                : x;
+
+        Managers.TEXT.drawString(graphics, text, align, y - (Managers.TEXT.getHeight() >> 1), applyCloseEffect(color));
+    }
+
+    public void drawRightString(GuiGraphicsExtractor graphics,
+                                String text,
+                                float x,
+                                float y,
+                                boolean primaryColor,
+                                float width)
+    {
+        int color = primaryColor
+                ? getTheme().getPrimary()
+                : 0xFFFFFFFF;
+        float align = x - width;
+
+        Managers.TEXT.drawString(graphics, text, align, y - (Managers.TEXT.getHeight() >> 1), applyCloseEffect(color));
+    }
+
+    public void drawString(GuiGraphicsExtractor graphics,
+                           String text,
+                           float x,
+                           float y,
+                           int color)
+    {
+        Managers.TEXT.drawString(graphics, text, x, y - (Managers.TEXT.getHeight() >> 1), applyCloseEffect(color));
+    }
+
+    public void drawRightSettingText(GuiGraphicsExtractor graphics,
+                                     String value,
+                                     boolean primaryColor,
+                                     float width)
+    {
+        if (value == null)
+        {
+            return;
+        }
+
+        float align = getWidth() - getTextPadding();
+        float x = getAlignedX() + align;
+        float y = getY() + (getFeatureHeight()) / 2 + 1f;
+        drawRightString(graphics, value, x, y, primaryColor, width);
+    }
+
+    public void drawSettingText(GuiGraphicsExtractor graphics, String value, boolean primaryColor, boolean rightAlign)
+    {
+        float extra;
+        extra  = (float) hoverAnimation.getCurrent();
+        extra -= (float) scrollAnimation.getCurrent();
+
+        float align = rightAlign ? getWidth() - getTextPadding() : getTextPadding();
+        float x = getX() + align + extra;
+        float y = getY() + (getFeatureHeight()) / 2 + 1f;
+        drawString(graphics, value, x, y, primaryColor, rightAlign);
+    }
+
+    public void drawToggleableRect(GuiGraphicsExtractor graphics, ColorAnimation colorAnimation)
+    {
+        double hFactor = hoverAnimation.getFactor();
+        double eFactor = colorAnimation.getFactor();
+        Color hoverColor = ColorUtil.withTransparency(
+                Color.GRAY,
+                Math.max(50, (int) (75 * hFactor))
+        );
+
+        Color clr = getTheme().getPrimaryC(0.5f);
+        Color enabledColor = ColorUtil.interpolate(clr, getTheme().getHoverC(0.5f), hFactor);
+        Color color = ColorUtil.interpolate(
+                hoverColor,
+                enabledColor,
+                eFactor
+        );
+
+        Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), applyCloseEffect(color.getRGB()));
+    }
+
+    public int applyCloseEffect(int color)
+    {
+        return ColorUtil.withTransparencyMultiplier(color, (float) closeAnimation.getFactor()).getRGB();
     }
 
     public boolean shouldRenderComponent()

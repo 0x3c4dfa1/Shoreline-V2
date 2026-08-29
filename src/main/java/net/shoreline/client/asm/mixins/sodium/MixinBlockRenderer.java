@@ -28,7 +28,7 @@ public class MixinBlockRenderer
                                CallbackInfo info)
     {
         if (Minecraft.getInstance().player != null) {
-            if (NoRenderModule.INSTANCE.isEnabled() && NoRenderModule.INSTANCE.getBlocksConfig().getValue() && ((RegistrySetting<Block>) NoRenderModule.INSTANCE.getBlockBlackListConfig()).contains(state.getBlock())) {
+            if (NoRenderModule.INSTANCE.isEnabled() && NoRenderModule.INSTANCE.getBlocksConfig().getValue() && ((RegistrySetting<Block>) NoRenderModule.INSTANCE.getBlockListConfig()).contains(state.getBlock())) {
                 info.cancel();
             }
         }

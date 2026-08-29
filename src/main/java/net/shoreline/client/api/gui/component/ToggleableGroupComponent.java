@@ -31,25 +31,11 @@ public class ToggleableGroupComponent extends ParentComponent
     @Override
     public void drawComponent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks)
     {
-        double hFactor = hoverAnimation.getFactor();
-        double eFactor = colorAnimation.getFactor();
-        Color hoverColor = ColorUtil.withTransparency(
-                Color.GRAY,
-                Math.max(50, (int) (75 * hFactor))
-        );
-
-        Color clr = getTheme().getPrimaryC(0.5f);
-        Color enabledColor = ColorUtil.interpolate(clr, clr.brighter(), hFactor);
-        Color color = ColorUtil.interpolate(
-                hoverColor,
-                enabledColor,
-                eFactor
-        );
+        drawToggleableRect(graphics, colorAnimation);
 
         String value = open ? "-" : "+";
-        Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), color.getRGB());
         scissorText(graphics, value);
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
         graphics.disableScissor();
         drawAnimatedRightText(graphics, value, false, partialTicks);
         if (animation.getFactor() > 0.001)

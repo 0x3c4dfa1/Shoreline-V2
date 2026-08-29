@@ -1,5 +1,6 @@
 package net.shoreline.client.impl.modules.hud;
 
+import net.minecraft.ChatFormatting;
 import net.shoreline.client.api.element.dynamic.DynamicElement;
 import net.shoreline.client.api.element.dynamic.DynamicEntry;
 
@@ -18,6 +19,6 @@ public class BrandHudElement extends DynamicElement
 
     public String getBrandText()
     {
-        return mc.player.connection.serverBrand();
+        return "Brand " + ChatFormatting.WHITE + mc.player.connection.serverBrand();
     }
 }

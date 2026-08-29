@@ -265,24 +265,7 @@ public class RegistrySelectionComponent<T> extends GridParentComponent
                 return;
             }
 
-            double hFactor = hoverAnimation.getFactor();
-            double eFactor = colorAnimation.getFactor();
-
-            Color hoverColor = ColorUtil.withTransparency(
-                    Color.GRAY,
-                    Math.max(50, (int) (75 * hFactor))
-            );
-
-            Color clr = getTheme().getPrimaryC(0.5f);
-            Color enabledColor = ColorUtil.interpolate(clr, clr.brighter(), hFactor);
-
-            Color color = ColorUtil.interpolate(
-                    hoverColor,
-                    enabledColor,
-                    eFactor
-            );
-
-            Render2DUtil.drawRect(graphics, getX(), getY() + 1.5f, getX() + getWidth(), getY() + getFeatureHeight(), color.getRGB());
+            drawToggleableRect(graphics, colorAnimation);
             drawEntry(graphics, entry, (int) (getX() + (getWidth() / 2f) - 8), (int) (getY() + (getHeight() / 2f)) - 6);
         }
 

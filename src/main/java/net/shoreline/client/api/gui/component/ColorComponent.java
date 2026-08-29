@@ -38,7 +38,7 @@ public class ColorComponent extends ParentComponent
     public void drawComponent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks)
     {
         drawHoverRect(graphics);
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
         Render2DUtil.drawBorderedRect(graphics, getAlignedX() + getWidth() - 11, getY() + 4, getAlignedX() + getWidth() - 2, getY() + getFeatureHeight() - 2, 0.5f, setting.getValue().getRGB(), getTheme().getPrimary());
 
         if (animation.getFactor() > 0.001)
@@ -84,6 +84,12 @@ public class ColorComponent extends ParentComponent
                 Render2DUtil.drawRect(graphics, pickerX - 0.5f, sliderY - 0.5f, pickerX + pickerW + 0.5f, sliderY + sliderH + 0.5f, 0xFF000000);
                 Render2DUtil.drawRect(graphics, pickerX, sliderY, pickerX + pickerW, sliderY + sliderH, 0xFFFFFFFF);
             }
+
+            @Override
+            public boolean isDisabled()
+            {
+                return setting.isGlobal();
+            }
         });
 
         if (setting.isTransparency())
@@ -112,6 +118,12 @@ public class ColorComponent extends ParentComponent
                     Render2DUtil.drawGradientRect(graphics, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, true, 0, clr.getRGB());
                     Render2DUtil.drawRect(graphics, pickerX - 0.5f, sliderY - 0.5f, pickerX + pickerW + 0.5f, sliderY + sliderH + 0.5f, 0xFF000000);
                     Render2DUtil.drawRect(graphics, pickerX, sliderY, pickerX + pickerW, sliderY + sliderH, 0xFFFFFFFF);
+                }
+
+                @Override
+                public boolean isDisabled()
+                {
+                    return setting.isGlobal();
                 }
             });
         }
@@ -218,6 +230,11 @@ public class ColorComponent extends ParentComponent
         @Override
         public void mouseClicked(double mouseX, double mouseY, int button)
         {
+            if (setting.isGlobal())
+            {
+                return;
+
+            }
             boolean hovered = mouseWithinBounds(mouseX,
                     mouseY,
                     getAlignedX(),

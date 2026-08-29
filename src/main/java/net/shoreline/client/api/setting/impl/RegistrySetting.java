@@ -71,7 +71,7 @@ public class RegistrySetting<T> extends Setting<Collection<T>>
 
             if (!string.startsWith("minecraft")) // list type
             {
-                type = ListType.valueOf(string);
+                setType(ListType.valueOf(string));
                 continue;
             }
 
@@ -118,6 +118,12 @@ public class RegistrySetting<T> extends Setting<Collection<T>>
         return new RegistryComponent<>(this);
     }
 
+    public void setType(ListType type)
+    {
+        this.type = type;
+        onChange(getValue());
+    }
+
     public static class Builder<T> extends SettingBuilder<Collection<T>>
     {
         private Collection<T> values;
@@ -138,7 +144,7 @@ public class RegistrySetting<T> extends Setting<Collection<T>>
 
         public Builder<T> setListType(ListType type)
         {
-            this.listType = listType;
+            this.listType = type;
             return this;
         }
 

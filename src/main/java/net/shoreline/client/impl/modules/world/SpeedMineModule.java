@@ -6,8 +6,10 @@ import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.shoreline.client.Shoreline;
 import net.shoreline.client.api.module.Category;
 import net.shoreline.client.api.module.Toggleable;
 import net.shoreline.client.api.setting.Setting;
@@ -68,6 +70,9 @@ public class SpeedMineModule extends Toggleable
     Setting<SilentSwapType> swapType = new EnumSetting.Builder<SilentSwapType>("Swap")
             .setDescription("The silent swap type")
             .setDefaultValue(SilentSwapType.HOTBAR).build();
+    Setting<Boolean> toobee = new BooleanSetting.Builder("2b2t")
+            .setDescription("Tweaks for 2b2t")
+            .setDefaultValue(false).build();
     Setting<Boolean> autoDisable = new BooleanSetting.Builder("AutoDisable")
             .setDescription("Disables on death to prevent double mine failing")
             .setDefaultValue(true).build();
@@ -145,11 +150,7 @@ public class SpeedMineModule extends Toggleable
             return;
         }
 
-        if (isEnabled())
-        {
-            tickMain();
-        }
-
+        tickMain();
         tickPacket();
         if (isManualMining && mainMiningBlock == null)
         {
@@ -165,7 +166,7 @@ public class SpeedMineModule extends Toggleable
             return;
         }
 
-        event.setCanceled(true  );
+        event.setCanceled(true);
         if (isMining(event.getPos()) || !MiningUtil.canMineBlock(event.getState()))
         {
             return;
@@ -173,7 +174,7 @@ public class SpeedMineModule extends Toggleable
 
         isManualMining = true;
         startMining(event.getPos(), event.getDirection());
-        mc.player.swing(InteractionHand.MAIN_HAND, false);
+        //mc.player.swing(InteractionHand.MAIN_HAND, false);
     }
 
     @Subscribe
@@ -238,6 +239,7 @@ public class SpeedMineModule extends Toggleable
                 {
                     packetMiningBlock = mainMiningBlock.copy(1.0f);
                     packetState = new MiningRenderState(packetMiningBlock, new Animation(true, 300));
+                    sendDoubleMinePackets(packetState.data);
                 }
             }
         }
@@ -317,7 +319,7 @@ public class SpeedMineModule extends Toggleable
         }
 
         boolean multiTasking = mc.player.isUsingItem() && !multitaskConfig.getValue();
-        float blockDamage = mainMiningBlock.tickDelta(multiTasking);
+        float blockDamage = Math.max(mainMiningBlock.tickDelta(multiTasking), 0);
         if (blockDamage < speedConfig.getValue())
         {
             return;
@@ -326,7 +328,6 @@ public class SpeedMineModule extends Toggleable
         if (mainMiningBlock.isAir())
         {
             mainMiningBlock.resetTicksMining();
-
             if (isManualMining)
             {
                 isManualMining = false;
@@ -344,7 +345,6 @@ public class SpeedMineModule extends Toggleable
             {
                 return;
             }
-
         }
         else if (mainMiningBlock.hasMinedFor(30))
         {
@@ -352,7 +352,7 @@ public class SpeedMineModule extends Toggleable
             return;
         }
 
-        if (multiTasking)
+        if (multiTasking || toobee.getValue() && mainMiningBlock.isAir())
         {
             return;
         }
@@ -462,6 +462,12 @@ public class SpeedMineModule extends Toggleable
     public boolean isUsedByAutoMine()
     {
         return AutoMineModule.INSTANCE.isEnabled() && isEnabled();
+    }
+
+    public void sendDoubleMinePackets(MiningData data)
+    {
+        miningPackets.getValue().sendStopPackets(this, data.getBlockPos(), data.getDirection());
+        sendPacket(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
     }
 
     @Getter

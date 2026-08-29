@@ -19,7 +19,7 @@ public class RunnableComponent extends AbstractComponent implements Interactable
     public void drawComponent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks)
     {
         drawHoverRect(graphics);
-        drawSettingText(graphics, this, getLabel(), false, false);
+        drawSettingText(graphics, getLabel(), false, false);
     }
 
     @Override
